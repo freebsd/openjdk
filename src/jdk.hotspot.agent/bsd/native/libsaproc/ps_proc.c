@@ -121,7 +121,7 @@ static bool process_write_data(struct ps_prochandle* ph,
 static bool process_get_lwp_regs(struct ps_prochandle* ph, lwpid_t lwpid, struct reg *user) {
   // we have already attached to all thread 'pid's, just use ptrace call
   // to get regset now. Note that we don't cache regset upfront for processes.
- if (ptrace(PT_GETREGS, ph->pid, (caddr_t) user, 0) < 0) {
+ if (ptrace(PT_GETREGS, lwpid, (caddr_t) user, 0) < 0) {
    print_error("ptrace(PTRACE_GETREGS, ...) failed for lwp %d (%d)\n", lwpid, ph->pid);
    return false;
  }
