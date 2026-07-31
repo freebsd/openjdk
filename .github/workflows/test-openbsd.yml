@@ -78,7 +78,6 @@ jobs:
         include:
           - test-name: 'jdk/tier1 part 1'
             test-suite: 'test/jdk/:tier1_part1'
-            test-timeout-factor: 'TIMEOUT_FACTOR=4'
 
           - test-name: 'jdk/tier1 part 2'
             test-suite: 'test/jdk/:tier1_part2'
@@ -115,7 +114,6 @@ jobs:
 
           - test-name: 'hs/tier1 serviceability'
             test-suite: 'test/hotspot/jtreg/:tier1_serviceability'
-            test-timeout-factor: 'TIMEOUT_FACTOR=2'
             debug-suffix: ${{ inputs.debug-suffix }}
 
           - test-name: 'lib-test/tier1'
@@ -135,7 +133,7 @@ jobs:
           sudo df -h
 
       - name: 'Checkout the JDK source'
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: 'Set the BootJDK path'
         id: bootjdk
@@ -175,7 +173,7 @@ jobs:
 
       - name: Restore Cached VM Packages
         id: vm-packages-cache
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v5
         with:
           path: obsd-pkg-cache
           key: packages-${{ inputs.platform }}-${{ inputs.vm-release }}-${{ inputs.vm-arch }}-${{ hashFiles('./obsd-pkg-cache/*.tgz') }}
@@ -186,7 +184,7 @@ jobs:
         with:
           release: ${{ inputs.vm-release }}
           arch: ${{ inputs.vm-arch }}
-          mem: 11264
+          mem: 12288
           cpu: 4
           envs: 'MYTOKEN'
           usesh: true
@@ -202,7 +200,6 @@ jobs:
           run: >
             ulimit -Sd $(ulimit -dH) &&
             gmake test-prebuilt
-            TEST_JOBS=1
             TEST='${{ matrix.test-suite }}'
             BOOT_JDK=${{ steps.bootjdk.outputs.path }}
             JT_HOME=${{ steps.jtreg.outputs.path }}
@@ -211,7 +208,7 @@ jobs:
             TEST_IMAGE_DIR=${{ steps.bundles.outputs.tests-path }}
             ${{ steps.extra-options.outputs.test-jdk }}
             ${{ steps.extra-options.outputs.compile-jdk }}
-            JTREG='JAVA_OPTIONS=-XX:-CreateCoredumpOnCrash;VERBOSE=fail,error,time;KEYWORDS=!headful;${{ steps.extra-options.outputs.extra-problem-lists }};${{ matrix.test-timeout-factor }}'
+            JTREG='JAVA_OPTIONS=-XX:-CreateCoredumpOnCrash;VERBOSE=fail,error,time;KEYWORDS=!headful;${{ steps.extra-options.outputs.extra-problem-lists }}'
             && bash ./.github/scripts/gen-test-summary.sh "$GITHUB_STEP_SUMMARY" "$GITHUB_OUTPUT"
 
       - name: 'Check Memory, Swap and Disk Usage'
@@ -255,7 +252,7 @@ jobs:
         if: always()
 
       - name: 'Upload test results'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           path: results
           name: ${{ steps.package.outputs.artifact-name }}
@@ -263,7 +260,7 @@ jobs:
 
         # This is the best way I found to abort the job with an error message
       - name: 'Notify about test failures'
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: core.setFailed('${{ steps.run-tests.outputs.error-message }}')
         if: steps.run-tests.outputs.failure == 'true'

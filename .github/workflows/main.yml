@@ -63,7 +63,7 @@ jobs:
     runs-on: ubuntu-24.04
     env:
       # List of platforms to exclude by default
-      EXCLUDED_PLATFORMS: 'alpine-linux-x64'
+      EXCLUDED_PLATFORMS: 'linux-x64,linux-x64-variants,linux-cross-compile,alpine-linux-x64,macos-x64,macos-aarch64,windows-x64,windows-aarch64,docs'
     outputs:
       linux-x64: ${{ steps.include.outputs.linux-x64 }}
       linux-x64-variants: ${{ steps.include.outputs.linux-x64-variants }}
@@ -80,7 +80,7 @@ jobs:
 
     steps:
       - name: 'Checkout the scripts'
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           sparse-checkout: |
             .github
@@ -360,6 +360,7 @@ jobs:
     uses: ./.github/workflows/build-windows.yml
     with:
       platform: windows-x64
+      runs-on: windows-2022
       msvc-toolset-version: '14.44'
       msvc-toolset-architecture: 'x86.x64'
       configure-arguments: ${{ github.event.inputs.configure-arguments }}
@@ -373,6 +374,7 @@ jobs:
     uses: ./.github/workflows/build-windows.yml
     with:
       platform: windows-aarch64
+      runs-on: windows-2022
       msvc-toolset-version: '14.44'
       msvc-toolset-architecture: 'arm64'
       make-target: 'hotspot'
@@ -390,7 +392,7 @@ jobs:
       platform: openbsd-x64
       runs-on: ubuntu-24.04
       vm-arch: 'x86_64'
-      vm-release: "7.8"
+      vm-release: "7.9"
       configure-arguments: ${{ github.event.inputs.configure-arguments }}
       make-arguments: ${{ github.event.inputs.make-arguments }}
     if: needs.prepare.outputs.openbsd-x64 == 'true'
@@ -403,7 +405,7 @@ jobs:
       platform: freebsd-x64
       runs-on: ubuntu-24.04
       vm-arch: 'x86_64'
-      vm-release: "14.3"
+      vm-release: "14.4"
       configure-arguments: ${{ github.event.inputs.configure-arguments }}
       make-arguments: ${{ github.event.inputs.make-arguments }}
     if: needs.prepare.outputs.freebsd-x64 == 'true'
@@ -479,7 +481,7 @@ jobs:
     with:
       platform: openbsd-x64
       runs-on: ubuntu-24.04
-      vm-release: 7.8
+      vm-release: 7.9
       vm-arch: x86_64
       debug-suffix: -debug
 
@@ -492,7 +494,7 @@ jobs:
     with:
       platform: freebsd-x64
       runs-on: ubuntu-24.04
-      vm-release: 14.3
+      vm-release: 14.4
       vm-arch: x86_64
       debug-suffix: -debug
 
@@ -505,6 +507,6 @@ jobs:
     with:
       platform: windows-x64
       bootjdk-platform: windows-x64
-      runs-on: windows-2025
+      runs-on: windows-2022
       dry-run: ${{ needs.prepare.outputs.dry-run == 'true' }}
       debug-suffix: -debug

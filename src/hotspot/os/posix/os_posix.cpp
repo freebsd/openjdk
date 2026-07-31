@@ -908,6 +908,14 @@ void* os::lookup_function(const char* name) {
   return dlsym(RTLD_DEFAULT, name);
 }
 
+int64_t os::ftell(FILE* file) {
+  return ::ftell(file);
+}
+
+int os::fseek(FILE* file, int64_t offset, int whence) {
+  return ::fseek(file, offset, whence);
+}
+
 jlong os::lseek(int fd, jlong offset, int whence) {
   return (jlong) ::lseek(fd, offset, whence);
 }
@@ -996,6 +1004,7 @@ void os::infinite_sleep() {
   }
 }
 
+#ifndef __OpenBSD__
 void os::naked_short_nanosleep(jlong ns) {
   struct timespec req;
   assert(ns > -1 && ns < NANOUNITS, "Un-interruptable sleep, short time use only");
@@ -1004,6 +1013,7 @@ void os::naked_short_nanosleep(jlong ns) {
   ::nanosleep(&req, nullptr);
   return;
 }
+#endif
 
 void os::naked_short_sleep(jlong ms) {
   assert(ms < MILLIUNITS, "Un-interruptable sleep, short time use only");
