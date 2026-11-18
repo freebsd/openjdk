@@ -29,7 +29,7 @@
  *      8243559 8225072 8258630 8259312 8256421 8225081 8225082 8225083 8245654
  *      8305975 8304760 8307134 8295894 8314960 8317373 8317374 8318759 8319187
  *      8321408 8316138 8341057 8303770 8350498 8359170 8361212 8372351 8387123
- *      8386371 8392771 8395690
+ *      8395690
  * @summary Check root CA entries in cacerts file
  */
 import java.io.ByteArrayInputStream;
@@ -53,7 +53,7 @@ public class VerifyCACerts {
     // SHA-256 of cacerts, can be generated with
     // shasum -a 256 cacerts | sed -e 's/../&:/g' | tr '[:lower:]' '[:upper:]' | cut -c1-95
     private static final String CHECKSUM
-            = "5F:8D:07:81:52:CB:9A:C6:8B:87:11:05:8C:11:7B:6C:07:32:EE:23:DA:8D:38:99:D1:93:96:70:5E:0C:80:E9";
+            = "C4:EA:62:8E:D2:49:7E:E7:97:3D:C6:42:C3:62:D2:33:E5:0A:6F:9D:45:57:4B:B5:A2:C6:19:62:87:21:D5:34";
 
     // Hex formatter to upper case with ":" delimiter
     private static final HexFormat HEX = HexFormat.ofDelimiter(":").withUpperCase();
