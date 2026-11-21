@@ -81,9 +81,12 @@ public enum CABI {
                     return LINUX_PPC_64;
                 } else if (OperatingSystem.isAix()) {
                     return AIX_PPC_64;
+                } else if (OperatingSystem.isBsd()) {
+                    // FreeBSD uses the ELFv2 ABI on big-endian powerpc64 as well
+                    return LINUX_PPC_64_LE;
                 }
             } else if (arch.equals("ppc64le")) {
-                if (OperatingSystem.isLinux()) {
+                if (OperatingSystem.isLinux() || OperatingSystem.isBsd()) {
                     return LINUX_PPC_64_LE;
                 }
             } else if (arch.equals("riscv64")) {
